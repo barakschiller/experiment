@@ -1,7 +1,7 @@
-from nose.tools import assert_equals, assert_greater, assert_raises
+from nose.tools import assert_equals, assert_greater, assert_raises, assert_in
 from collections import Counter
 
-from experiment.core import experiment
+from experiment.core.experiment import Experiment, Variant
 
 
 class TestExperiment(object):
@@ -11,12 +11,12 @@ class TestExperiment(object):
 
 	@staticmethod
 	def build_two_variant_experiment():
-		return experiment.DraftExperiment(
+		return Experiment.create_draft(
 			name='test',
 			variants = [
-				experiment.Variant(TestExperiment.VARIANT1,50),
-				experiment.Variant(TestExperiment.VARIANT2,50)
-			]).build()  
+				Variant(TestExperiment.VARIANT1, 50),
+				Variant(TestExperiment.VARIANT2, 50)
+			]).start()  
 	
 	@staticmethod
 	def generate_assignments(experiment, count=100):
@@ -25,11 +25,10 @@ class TestExperiment(object):
 	def test_one_variant_is_always_assigned(self):
 		VARIANT = 'any'
 		
-		e = experiment.DraftExperiment(
+		e = Experiment.create_draft(
 			name='test',
-			variants = [
-				experiment.Variant(VARIANT,100)
-			]).build()  
+			variants = [Variant(VARIANT,100)
+			]).start()  
 		
 		assert_equals(self.generate_assignments(e)[VARIANT], 100)
 		
@@ -49,3 +48,35 @@ class TestExperiment(object):
 	def test_fail_to_finalize_experiment_to_non_existing_variant(self):
 		with assert_raises(ValueError):
 			self.build_two_variant_experiment().complete(self.VARIANT_NOT_IN_EXPERIMENT)
+
+	def test_fail_to_update_completed_experiment(self):
+		VARIANT = 'any'
+		e = Experiment.create_draft(
+			name='test',
+			variants = [Variant(VARIANT,100)
+			]).start()
+		e.complete(VARIANT)
+		with assert_raises(ValueError):
+			e.update_variants([])
+
+	def test_cannot_add_variant_to_running_test(self):
+		EXISTING_VARIANT = Variant('existing', 100)
+		ADDED_VARIANT = Variant('added', 100)
+		e = Experiment.create_draft(
+			name='test',
+			variants=[EXISTING_VARIANT]).start()
+
+		with assert_raises(ValueError):
+			e.update_variants([EXISTING_VARIANT, ADDED_VARIANT])
+
+	def can_change_allocation_for_running_test(self):
+		INITIAL_VARIANT = Variant('var', 100)
+		CHANGED_VARIANT = Variant('var', 50)
+
+		e = Experiment.create_draft(
+			name='test',
+			variants=[INITIAL_VARIANT]).start()
+
+		e.update_variants([CHANGED_VARIANT])
+
+		assert_in(CHANGED_VARIANT, e.variants)
