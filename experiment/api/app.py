@@ -42,9 +42,9 @@ def get_all_experiments():
 	experiments = ExperimentService.create().list()
 	return jsonify(experiments=experiments)
 
-@app.route('/experiment/<experiment_id>/assign/<entity_id>', methods=['GET'])
-def experiment_assign_entity(experiment_id, entity_id):
-	experiment = ExperimentService.create().get(experiment_id)
+@app.route('/experiment/<name>/assign/<entity_id>', methods=['GET'])
+def experiment_assign_entity(name, entity_id):
+	experiment = ExperimentService.create().get(name)
 	assignment = AssignmentService.create().assign(experiment, entity_id)
 	_log.info('Experiment {}, assigned <{}> to <{}>'.format(experiment.name, entity_id, assignment))
 	return jsonify(entity_id=entity_id, assignment=assignment)

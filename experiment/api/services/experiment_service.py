@@ -3,8 +3,8 @@ from experiment.storage.dict import DictStorage
 from experiment.storage.postgres import PostgresStorage
 from experiment.storage import json_ser
 
-storage = DictStorage()
-#storage = PostgresStorage("host='localhost' dbname='experiment' user='postgres'")
+#storage = DictStorage()
+storage = PostgresStorage("host='localhost' dbname='experiment' user='postgres'")
 
 class ExperimentService(object):
 	ADMIN_KEY = 'admin:all_experiments'

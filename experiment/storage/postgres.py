@@ -21,12 +21,12 @@ class PostgresStorage(object):
 
 	def update(self, key, dict_value):
 		with pooled_cursor(self.pool) as cursor:
-			data = json.dumps(dict_value)
-			_log.info('About to update %s to %s', key, data)
+			value = json.dumps(dict_value)
+			_log.info('About to update %s to %s', key, value)
 			cursor.execute('UPDATE experiment SET value = %s WHERE key = %s', (value, key))
 			_log.info('Done')
 
-	def get(self, name):
+	def get(self, key):
 		with pooled_cursor(self.pool) as cursor:
 			cursor.execute('SELECT value FROM experiment WHERE key = %s', (key,))
 			data = cursor.fetchone()
@@ -34,7 +34,7 @@ class PostgresStorage(object):
 				return data
 			data = data[0]
 			_log.info('Reading experiment got: %s', data)
-			return json.loads(data)
+			return data
 
 	def delete(self, key):
 		pass

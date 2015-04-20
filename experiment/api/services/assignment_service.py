@@ -1,8 +1,8 @@
 from experiment.storage.dict import DictStorage
 from experiment.storage.postgres import PostgresStorage
 
-storage = DictStorage()
-#storage = PostgresStorage("host='localhost' dbname='experiment' user='postgres'", table='assignment')
+#storage = DictStorage()
+storage = PostgresStorage("host='localhost' dbname='experiment' user='postgres'")
 
 
 class AssignmentService(object):
