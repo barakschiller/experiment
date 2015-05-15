@@ -53,23 +53,27 @@ class Experiment(object):
         if self.state != State.RUNNING:
             raise ValueError('Experiment not started')
 
-        if variant_name not in (variant.name for variant in self.variants):
+        if variant_name not in self.variant_names:
             raise ValueError('Variant "{}" not defined in experiment'.format(variant_name))
         self.override = variant_name
         self.state = State.COMPLETED
         return self
 
-    def update_variants(self, variants):
+    def update_variants(self, new_variants):
         if self.state == State.COMPLETED:
             raise ValueError('Cannot update a completed experiment')
-        if self.state == State.RUNNING and _names(self.variants) != _names(variants):
+        if self.state == State.RUNNING and self.variant_names != _names(new_variants):
             raise ValueError('Cannot add or remove variants from a running experiment')
-        self._internal_update_variants(variants)
+        self._internal_update_variants(new_variants)
 
     def _internal_update_variants(self, variants):
         self.variants = variants[:]
         self.mod = sum([variant.allocation for variant in self.variants])
         self.salt = self.name
+
+    @property
+    def variant_names(self):
+        return _names(self.variants)
 
 
 def _names(variants):

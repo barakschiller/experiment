@@ -46,7 +46,7 @@ def update_experiment(name):
 @experiment_app.route('/experiment/<name>/start')
 def start_experiment(name):
     _experiment_service().start(name)
-    _log.info('Started experiment {} from draft'.format(name))
+    _log.info('Started experiment {}'.format(name))
     return jsonify(status='Experiment started')
 
 
@@ -62,12 +62,15 @@ def experiment_assign_entity(name, entity_id):
     _log.info('Experiment {}, assigned <{}> to <{}>'.format(experiment.name, entity_id, assignment))
     return jsonify(entity_id=entity_id, assignment=assignment)
 
+
 @experiment_app.errorhandler(ItemAlreadyExistsException)
 def handle_item_already_exists(_):
     return 'Item with the same name already exists', 400
 
+
 def _experiment_service():
     return ExperimentService(experiment_app.config['EXPERIMENT_STORAGE'])
+
 
 def _assignment_service():
     return AssignmentService(experiment_app.config['ASSIGNMENT_STORAGE'])

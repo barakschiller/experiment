@@ -30,18 +30,39 @@ class TestAssignmentService(object):
 
         assert_equal(service.assign(experiment, ANY_ENTITY), START)
 
+    def test_manual_assignment_overwrites_previous_assignment(self):
+        ALLOCATION_100 = 'var1'
+        ALLOCATION_0 = 'var2'
+        ANY_ENTITY = 1
+
+        experiment = Experiment.create_draft(
+            name='test',
+            variants=[
+                Variant(ALLOCATION_100, 100),
+                Variant(ALLOCATION_0, 0),
+            ]).start()
+
+        service = AssignmentService(storage=DictStorage())
+
+        assert_equal(service.assign(experiment, ANY_ENTITY), ALLOCATION_100)
+        service.manual_assign(experiment, ANY_ENTITY, ALLOCATION_0)
+
+        assert_equal(service.assign(experiment, ANY_ENTITY), ALLOCATION_0)
+
+
     def test_entity_name_escaped(self):
         experiment = Experiment.create_draft(
             name='test',
             variants=[
                 Variant('anyvar', 100),
-            ]).start()
+                ]).start()
 
         storage = DictStorage()
         service = AssignmentService(storage=storage)
 
         service.assign(experiment, 'name-with-colon:')
         assert_not_equal(':', storage.list()[0][-1])
+
 
 
 
