@@ -34,6 +34,7 @@ nosetests.xml
 .project
 .pydevproject
 .idea
+*.iml
 
 # Complexity
 output/*.html
@@ -44,4 +45,5 @@ docs/_build
 
 # virtualenv
 .venv
+
 
