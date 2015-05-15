@@ -1,3 +1,5 @@
+from api.services import escape_name
+
 class AssignmentService(object):
     def __init__(self, storage):
         self.storage = storage
@@ -19,5 +21,4 @@ class AssignmentService(object):
 
     @staticmethod
     def _key(experiment_name, entity_name):
-        escaped_entity_name = str(entity_name).replace('-', '--').replace(':', '-')
-        return 'experiment:{}:entity:{}'.format(experiment_name, escaped_entity_name)
+        return 'experiment:{}:entity:{}'.format(escape_name(experiment_name), escape_name(entity_name))

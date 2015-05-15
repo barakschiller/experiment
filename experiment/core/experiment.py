@@ -10,7 +10,7 @@ State = Enum('State', 'DRAFT RUNNING COMPLETED')
 
 
 class Experiment(object):
-    def __init__(self, name, variants, state, override=None):
+    def __init__(self, name, variants, state=State.DRAFT, override=None):
         self.name = name
         self.state = state
         self.override = override
