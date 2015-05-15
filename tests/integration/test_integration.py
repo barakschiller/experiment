@@ -1,4 +1,4 @@
-from experiment.api import app
+from experiment.api import dispatcher
 import json
 import logging
 
@@ -16,8 +16,8 @@ class TestIntegration(object):
             ))
 
     def setup(self):
-        app.app.config['TESTING'] = True
-        self.app = app.app.test_client()
+        dispatcher.experiment_app.config['TESTING'] = True
+        self.app = dispatcher.experiment_app.test_client()
 
     def test_build_experiment_and_assign(self):
 

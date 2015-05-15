@@ -1,5 +1,5 @@
-from experiment.api.app import app
+from experiment.api.dispatcher import experiment_app
 import logging
 logging.basicConfig()
 logging.getLogger().setLevel(logging.DEBUG)
-app.run(debug=True, host='0.0.0.0')
+experiment_app.run(debug=True, host='0.0.0.0')

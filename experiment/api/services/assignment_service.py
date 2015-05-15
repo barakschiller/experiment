@@ -1,10 +1,3 @@
-from experiment.storage.dict import DictStorage
-from experiment.storage.postgres import PostgresStorage
-
-#storage = DictStorage()
-storage = PostgresStorage("host='localhost' dbname='experiment' user='postgres'")
-
-
 class AssignmentService(object):
     def __init__(self, storage):
         self.storage = storage
@@ -23,7 +16,3 @@ class AssignmentService(object):
     @staticmethod
     def key(experiment_name, entity_name):
         return 'experiment:{}:entity:{}'.format(experiment_name, entity_name)
-
-    @classmethod
-    def create(cls):
-        return cls(storage)

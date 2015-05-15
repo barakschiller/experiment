@@ -1,10 +1,5 @@
-from experiment import storage
-from experiment.storage.dict import DictStorage
-from experiment.storage.postgres import PostgresStorage
 from experiment.storage import json_ser
 
-#storage = DictStorage()
-storage = PostgresStorage("host='localhost' dbname='experiment' user='postgres'")
 
 class ExperimentService(object):
     ADMIN_KEY = 'admin:all_experiments'
@@ -13,7 +8,7 @@ class ExperimentService(object):
         self.storage = storage
 
     def list(self):
-        return storage.get(self.ADMIN_KEY)
+        return self.storage.get(self.ADMIN_KEY)
 
     def store(self, experiment):
         if experiment.name.find(':') >= 0:
@@ -31,24 +26,20 @@ class ExperimentService(object):
             self.storage.update(self.ADMIN_KEY, experiment_list)
 
     def get(self, experiment_name):
-        return json_ser.experiment_from_dict(storage.get(self.key(experiment_name)))
+        return json_ser.experiment_from_dict(self.storage.get(self.key(experiment_name)))
 
     def update(self, experiment_name, variants):
         experiment = self.get(experiment_name)
         experiment.update_variants(variants)
-        storage.update(self.key(experiment.name), dict_value=json_ser.experiment_to_dict(experiment))
+        self.storage.update(self.key(experiment.name), dict_value=json_ser.experiment_to_dict(experiment))
         return experiment
 
     def start(self, experiment_name):
         experiment = self.get(experiment_name)
         experiment.start()
-        storage.update(self.key(experiment.name), dict_value=json_ser.experiment_to_dict(experiment))
+        self.storage.update(self.key(experiment.name), dict_value=json_ser.experiment_to_dict(experiment))
         return experiment
 
     @staticmethod
     def key(experiment_name):
         return '{}:{}'.format('experiment', experiment_name)
-
-    @classmethod
-    def create(cls):
-        return cls(storage)
