@@ -29,12 +29,12 @@ class Experiment(object):
 
     def assign(self, entity):
         if self.state == State.DRAFT:
-            raise ValueError('Exeriment is still a draft')
+            raise ValueError('Experiment is still a draft')
         if self.override is not None:
             return self.override
 
-        hash = hashlib.md5("{}-{}".format(self.salt, entity)).hexdigest()
-        entity_allocation = int(hash[:15], 16) % self.mod
+        hashed_user = hashlib.md5("{}-{}".format(self.salt, entity)).hexdigest()
+        entity_allocation = int(hashed_user[:15], 16) % self.mod
 
         cum_sum = 0
         for variant in self.variants:
@@ -62,7 +62,7 @@ class Experiment(object):
     def update_variants(self, variants):
         if self.state == State.COMPLETED:
             raise ValueError('Cannot update a completed experiment')
-        if self.state == State.RUNNING and self.variant_names(self.variants) != self.variant_names(variants):
+        if self.state == State.RUNNING and _names(self.variants) != _names(variants):
             raise ValueError('Cannot add or remove variants from a running experiment')
         self._internal_update_variants(variants)
 
@@ -71,6 +71,6 @@ class Experiment(object):
         self.mod = sum([variant.allocation for variant in self.variants])
         self.salt = self.name
 
-    @staticmethod
-    def variant_names(variants):
-        return set([var.name for var in variants])
+
+def _names(variants):
+    return set([var.name for var in variants])

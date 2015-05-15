@@ -1,5 +1,6 @@
 from experiment.storage import ItemAlreadyExistsException
 
+
 class DictStorage(object):
     def __init__(self):
         self.content = {}
@@ -23,3 +24,6 @@ class DictStorage(object):
 
     def delete(self, item_id):
         del self.content[item_id]
+
+    def list(self):
+        return self.content.keys()

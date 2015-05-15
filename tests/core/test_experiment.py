@@ -13,10 +13,10 @@ class TestExperiment(object):
     def build_two_variant_experiment():
         return Experiment.create_draft(
             name='test',
-            variants = [
+            variants=[
                 Variant(TestExperiment.VARIANT1, 50),
                 Variant(TestExperiment.VARIANT2, 50)
-            ]).start()
+                ]).start()
 
     @staticmethod
     def generate_assignments(experiment, count=100):
@@ -27,8 +27,9 @@ class TestExperiment(object):
 
         e = Experiment.create_draft(
             name='test',
-            variants = [Variant(VARIANT,100)
-            ]).start()
+            variants=[
+                Variant(VARIANT, 100)
+                ]).start()
 
         assert_equals(self.generate_assignments(e)[VARIANT], 100)
 
@@ -53,7 +54,8 @@ class TestExperiment(object):
         VARIANT = 'any'
         e = Experiment.create_draft(
             name='test',
-            variants = [Variant(VARIANT,100)
+            variants=[
+                Variant(VARIANT, 100)
             ]).start()
         e.complete(VARIANT)
         with assert_raises(ValueError):
